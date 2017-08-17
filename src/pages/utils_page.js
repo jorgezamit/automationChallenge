@@ -161,6 +161,7 @@ class UtilsPage {
         term: searchText,
         price: price,
         categories: categories,
+        ns: '1'
 
       },
       headers: {

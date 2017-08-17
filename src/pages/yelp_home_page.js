@@ -16,6 +16,7 @@ class YelpHomePage {
 	get priceFilter()			     { return browser.element('.filter-set.price-filters > ul'); }
 	get restaurantsMainAttributes()  { return browser.elements('.main-attributes .media-story'); }
 	get spinner() 					 { return browser.elements('.results-wrapper .throbber-container'); }
+	get indexBusinessName() 		 { return browser.elements('.indexed-biz-name'); }
 
 
 	setfindDescription(value){
@@ -82,9 +83,10 @@ class YelpHomePage {
 	}
 
 	reportStarsOfRestaurants(){
-		browser.pause(3000);
-		this.restaurantsMainAttributes.waitForVisible();
+		
+		//this.restaurantsMainAttributes.waitForVisible();
 		var restaurantsMainAttributes = this.restaurantsMainAttributes.value;
+		UtilsPage.waitForElementExists(restaurantsMainAttributes[0].element('.indexed-biz-name > a > span'), 1500);
 		var isPrintedResults = false;
 		var indexedBizName;
 		var stars;
@@ -92,7 +94,7 @@ class YelpHomePage {
 		console.log('Reports of stars per Restaurant:');
 		for(var i = 0; i < restaurantsMainAttributes.length; i++){
 			//restaurantsMainAttributes[i].element('.indexed-biz-name').waitForVisible();
-			indexedBizName = restaurantsMainAttributes[i].element(' .indexed-biz-name').getText();
+			indexedBizName = (i+1) + '. '+ restaurantsMainAttributes[i].element('.indexed-biz-name > a > span').getText();
 			stars = restaurantsMainAttributes[i].getAttribute('.i-stars','title');
 			UtilsPage.addLinesToReports(CONSTANTS.MEDIUM);
 			console.log(indexedBizName);
