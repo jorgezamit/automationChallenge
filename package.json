@@ -4,19 +4,15 @@
   "description": "Boilerplate project to run WebdriverIO tests with Cucumber",
   "homepage": "https://github.com/webdriverio/cucumber-boilerplate",
   "scripts": {
-    "clean": "read -p \"Are you sure you want to clean the project? [y/n] \" -n 1 -r; if [[ $REPLY =~ ^[Yy]$ ]]; then sudo rm -R .git .github demo-app test .codeclimate.yml .travis.yml jest.json wdio.BUILD.conf.js src/features/**; fi",
-    "local-webserver": "http-server ./demo-app -s",
-    "test": "npm run test:validate && npm run test:unit && npm run test:features",
-    "test:features": "npm run-script local-webserver & (wdio wdio.BUILD.conf.js; wdio_ret=$?; kill $(lsof -t -i:8080); exit $wdio_ret)",
-    "test:unit": "jest --config=jest.json",
-    "test:validate": "eslint 'src/**/*.js' 'test/**/*.js!(setup.js)'"
+    "allure:generate": "allure generate --clean",
+    "test": "npm run test:wdio && npm run allure:generate",
+    "test:open": "npm run test && allure open",
+    "test:wdio": "wdio",
+    "lint": "eslint src"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/webdriverio/cucumber-boilerplate.git"
-  },
-  "bugs": {
-    "url": "https://github.com/webdriverio/cucumber-boilerplate/issues"
+    "url": "https://github.com/jorgezamit/automationChallenge.git"
   },
   "keywords": [
     "webdriverio",
@@ -24,7 +20,7 @@
     "test",
     "selenium"
   ],
-  "author": "Christian Bromann <christian@saucelabs.com>",
+  "author": "Jorge Zamit",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
@@ -44,7 +40,7 @@
     "http-server": "~0.10.0",
     "jest": "~20.0.0",
     "node-rest-client": "^3.1.0",
-    "wdio-allure-addons-reporter": "0.0.4",
+    "wdio": "^0.3.3",
     "wdio-allure-reporter": "^0.1.2",
     "wdio-cucumber-framework": "^0.3.1",
     "wdio-phantomjs-service": "~0.2.2",

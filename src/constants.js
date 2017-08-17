@@ -12,5 +12,7 @@ module.exports = {
     YELP_BUSINESS_SEARCH_API_PATH: 'https://api.yelp.com/v3/businesses/search',
     YELP_BUSINESS_API_PATH: 'https://api.yelp.com/v3/businesses/',
     HTTP_STATUS_CODE_OK: 200,
-    FIRST: 'first'
+    FIRST: 'first',
+    CATEGORY: 'category',
+    PRICE: 'price'
 }

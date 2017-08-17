@@ -1,29 +1,31 @@
 'use strict';
-var UtilsPage = require('../pages/utils_page.js');
+const UtilsPage = require('../pages/utils_page.js');
 const CONSTANTS = require('../constants.js');
-var fs = require('fs');
+const fs = require('fs');
 
 class YelpHomePage {
 
-	get find_desc()                  { return browser.element('#find_desc'); }
-	get btnHeaderSearch()  			 { return browser.element('#header-search-submit'); }
+	get findDescription()            { return browser.element('#find_desc'); }
+	get buttonHeaderSearch()  		 { return browser.element('#header-search-submit'); }
 	get suggestionsList()			 { return browser.elements('ul[class="suggestions-list"]'); }
 	get paginationResults()  		 { return browser.element('.pagination-results-window'); }
-	get btnFilter()					 { return browser.element('.suggested-filters_filter-list > li:last-child'); }
+	get buttonFilter()				 { return browser.element('.suggested-filters_filter-list > li:last-child'); }
 	get neighborHoodMainFilter()     { return browser.element('.filter-set.place-filters > ul.main'); }
 	get distanceFilter()			 { return browser.element('.filter-set.distance-filters > ul'); }
+	get categoryFilter()			 { return browser.element('.filter-set.category-filters > ul'); }
+	get priceFilter()			     { return browser.element('.filter-set.price-filters > ul'); }
 	get restaurantsMainAttributes()  { return browser.elements('.main-attributes .media-story'); }
 	get spinner() 					 { return browser.elements('.results-wrapper .throbber-container'); }
 
 
-	setFind_desc(value){
-        this.find_desc.waitForVisible();
-        this.find_desc.setValue(value);
+	setfindDescription(value){
+        this.findDescription.waitForVisible();
+        this.findDescription.setValue(value);
     }
 
 	clickOnSuggestion(value){
-		this.find_desc.waitForVisible();
-		this.find_desc.click();
+		this.findDescription.waitForVisible();
+		this.findDescription.click();
 		this.suggestionsList.waitForVisible();
 		var elements = this.suggestionsList.value;
 		var firstList = elements[0];
@@ -37,34 +39,34 @@ class YelpHomePage {
 	}
 
 	appendToSearch(text){
-		this.find_desc.waitForVisible();
-		var currentSearch = this.find_desc.getValue();
-		this.setFind_desc(currentSearch + ' ' + text);
-		this.btnHeaderSearch.waitForVisible();
-		this.btnHeaderSearch.click();
+		this.findDescription.waitForVisible();
+		var currentSearch = this.findDescription.getValue();
+		this.setfindDescription(currentSearch + ' ' + text);
+		this.buttonHeaderSearch.waitForVisible();
+		this.buttonHeaderSearch.click();
 	}
 
 	reportTotalNumberOfSearchResults(){
-		this.find_desc.waitForVisible();
-		var currentSearch = this.find_desc.getValue();
+		this.findDescription.waitForVisible();
+		var currentSearch = this.findDescription.getValue();
 		var isPrintedResults = false;
 		isPrintedResults = this.printPaginationToConsole();
 		return isPrintedResults;
 	}
 
 	reportWithFilterFields(filterText, filterField){
-		this.btnFilter.waitForVisible();
-		if(!this.neighborHoodMainFilter.isVisible()){
-			this.btnFilter.click();
+		this.buttonFilter.waitForVisible();
+		if(!this.categoryFilter.isVisible()){
+			this.buttonFilter.click();
 		}
 		var currentFieldItems;
-		if(filterField && (filterField === CONSTANTS.NEIGHBORHOODS)){
-			this.neighborHoodMainFilter.waitForVisible();
-			currentFieldItems = this.neighborHoodMainFilter.elements('li').value;
+		if(filterField && (filterField === CONSTANTS.CATEGORY)){
+			this.categoryFilter.waitForVisible();
+			currentFieldItems = this.categoryFilter.elements('li').value;
 
-		}else if(filterField && (filterField === CONSTANTS.DISTANCE)){
-			this.distanceFilter.waitForVisible();
-			currentFieldItems = this.distanceFilter.elements('li').value;
+		}else if(filterField && (filterField === CONSTANTS.PRICE)){
+			this.priceFilter.waitForVisible();
+			currentFieldItems = this.priceFilter.elements('li').value;
 		}
 		var isPrintedResults = false;
 		if(filterText){
@@ -80,6 +82,7 @@ class YelpHomePage {
 	}
 
 	reportStarsOfRestaurants(){
+		browser.pause(3000);
 		this.restaurantsMainAttributes.waitForVisible();
 		var restaurantsMainAttributes = this.restaurantsMainAttributes.value;
 		var isPrintedResults = false;
@@ -88,7 +91,7 @@ class YelpHomePage {
 		UtilsPage.addLinesToReports(CONSTANTS.BIGGEST);
 		console.log('Reports of stars per Restaurant:');
 		for(var i = 0; i < restaurantsMainAttributes.length; i++){
-			restaurantsMainAttributes[i].element(' .indexed-biz-name').waitForVisible();
+			//restaurantsMainAttributes[i].element('.indexed-biz-name').waitForVisible();
 			indexedBizName = restaurantsMainAttributes[i].element(' .indexed-biz-name').getText();
 			stars = restaurantsMainAttributes[i].getAttribute('.i-stars','title');
 			UtilsPage.addLinesToReports(CONSTANTS.MEDIUM);

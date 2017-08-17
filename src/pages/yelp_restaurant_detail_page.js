@@ -1,5 +1,5 @@
 'use strict';
-var UtilsPage = require('../pages/utils_page.js');
+const UtilsPage = require('../pages/utils_page.js');
 const CONSTANTS = require('../constants.js');
 
 class YelpRestaurantDetailPage {

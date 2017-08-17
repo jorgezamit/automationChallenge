@@ -160,30 +160,42 @@ class UtilsPage {
         location: location,
         term: searchText,
         price: price,
-        categories: categories
+        categories: categories,
+
       },
       headers: {
         "Authorization": CONSTANTS.TOKEN
+      },
+      requestConfig: {
+        timeout: 10000, //request timeout in milliseconds 
+      },
+      responseConfig: {
+          timeout: 10000 //response timeout 
       }
     };
     client.get(apiPath, args, function (data, response) {
       if(response.statusCode === CONSTANTS.HTTP_STATUS_CODE_OK){
         results = data;
       }else{
+        console.log(response.error.code);
+        console.log(response.error.description);
         console.log('Error in Server response, method searchFromApi()');
         return;
       }
     }).on('error', function (err) {
     console.log('Something went wrong on the request', err.request.options);
-    });;
+    });
     //wait for async call to end.
-    browser.pause(10000);
+    browser.pause(15000);
     return results;
   }
 
   reportDataToConsole(searchText, location, price, categories, apiPath){
     var data = this.searchFromApi('', searchText, location, price, categories, apiPath);
-    console.log('Results for: ' + searchText + ' near ' + location);
+    //setTimeout(function(){console.log('your name')},5000);  
+
+    if(data !== undefined) {
+      console.log('Results for: ' + searchText + ' near ' + location);
       if(price && price !== ''){
         console.log('Price selected: ' + price);
       }
@@ -194,7 +206,11 @@ class UtilsPage {
       console.log('Total results: ' + data.total);
       console.log('');
       return data;
+    }else{
+      console.log('data is Undefined');
+    }    
   }
+  
 
   reportStarsRating(searchText, location, price, categories, apiPath){
     if(!searchText || !location || !apiPath){
@@ -211,7 +227,7 @@ class UtilsPage {
         console.log('');
       }
     }
-    browser.pause(10000);
+    browser.pause(15000);
   }
 
   reportCriticalInformation(restaurantValue, searchText, location, price, categories, apiPath){

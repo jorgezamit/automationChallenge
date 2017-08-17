@@ -74,7 +74,7 @@ exports.config = {
     coloredLogs: true,
     //
     // Saves a screenshot to a given path if a command fails.
-     screenshotPath: './src/errorShots/',
+     screenshotPath: './errorShots/',
     //
     // Set a base URL in order to shorten url command calls. If your url
     // parameter starts with "/", then the base url gets prepended.
@@ -89,7 +89,7 @@ exports.config = {
     connectionRetryTimeout: 90000,
     //
     // Default request retries count
-    connectionRetryCount: 3,
+    connectionRetryCount: 5,
     //
     // Initialize the browser instance with a WebdriverIO plugin. The object
     // should have the plugin name as key and the desired plugin options as
@@ -244,7 +244,7 @@ exports.config = {
             if(!scenarioName){
                 scenarioName = 'scenarioName';
             }
-            UtilsPage.generateScreenshotTimestamp(scenarioName, './src/screenshots/');
+            UtilsPage.generateScreenshotTimestamp(scenarioName, './screenshots/');
         }
     },
     beforeScenario: function (scenario) {
