@@ -14,7 +14,7 @@ class YelpHomePage {
 	get distanceFilter()			 { return browser.element('.filter-set.distance-filters > ul'); }
 	get categoryFilter()			 { return browser.element('.filter-set.category-filters > ul'); }
 	get priceFilter()			     { return browser.element('.filter-set.price-filters > ul'); }
-	get restaurantsMainAttributes()  { return browser.elements('.main-attributes .media-story'); }
+	get restaurantsMainAttributes()  { return browser.elements('.regular-search-result .main-attributes .media-story'); }
 	get spinner() 					 { return browser.elements('.results-wrapper .throbber-container'); }
 	get indexBusinessName() 		 { return browser.elements('.indexed-biz-name'); }
 
@@ -51,7 +51,9 @@ class YelpHomePage {
 		this.findDescription.waitForVisible();
 		var currentSearch = this.findDescription.getValue();
 		var isPrintedResults = false;
+		console.log('Results for: Restaurants near san francisco');
 		isPrintedResults = this.printPaginationToConsole();
+		console.log('');
 		return isPrintedResults;
 	}
 
@@ -79,35 +81,36 @@ class YelpHomePage {
 			}
 			isPrintedResults = this.printPaginationToConsole();
 		}
+		console.log('Results for: Restaurants pizza near san francisco');
+		if(filterField === CONSTANTS.CATEGORY){
+			console.log('Category: ' + filterText);
+		}else if(filterField === CONSTANTS.PRICE){
+			console.log('Price: ' + filterText);
+		}
 		return isPrintedResults;
 	}
 
 	reportStarsOfRestaurants(){
-		
-		//this.restaurantsMainAttributes.waitForVisible();
+		UtilsPage.waitForElementExists(this.restaurantsMainAttributes, 2000);
 		var restaurantsMainAttributes = this.restaurantsMainAttributes.value;
-		UtilsPage.waitForElementExists(restaurantsMainAttributes[0].element('.indexed-biz-name > a > span'), 1500);
 		var isPrintedResults = false;
 		var indexedBizName;
 		var stars;
-		UtilsPage.addLinesToReports(CONSTANTS.BIGGEST);
+		console.log('');
 		console.log('Reports of stars per Restaurant:');
 		for(var i = 0; i < restaurantsMainAttributes.length; i++){
-			//restaurantsMainAttributes[i].element('.indexed-biz-name').waitForVisible();
 			indexedBizName = (i+1) + '. '+ restaurantsMainAttributes[i].element('.indexed-biz-name > a > span').getText();
 			stars = restaurantsMainAttributes[i].getAttribute('.i-stars','title');
-			UtilsPage.addLinesToReports(CONSTANTS.MEDIUM);
+			console.log('');
 			console.log(indexedBizName);
 			console.log(stars);
-			UtilsPage.addLinesToReports(CONSTANTS.MEDIUM);
+			console.log('');
 			isPrintedResults = true;
 		}
-		UtilsPage.addLinesToReports(CONSTANTS.BIGGEST);
 		return isPrintedResults;
 	}
 
 	clickAndExpandSpecificRestaurantInformation(specificRestaurant){
-		this.restaurantsMainAttributes.waitForVisible();
 		var restaurantsMainAttributes = this.restaurantsMainAttributes.value;
 		if(specificRestaurant >= restaurantsMainAttributes.length){
 			console.log('specificRestaurant value out of scope in reportCriticalRestaurantInformation()');
@@ -124,7 +127,7 @@ class YelpHomePage {
 			console.log('Some error Happen with pagination information');
 			return isPrintedResults;
 		}
-		UtilsPage.addLinesToReports(CONSTANTS.BIGGEST);
+		console.log('');
 		var pagination = this.paginationResults.getText();
 		var totalResults;
 		var resultsPerPage;
@@ -135,7 +138,7 @@ class YelpHomePage {
 			console.log('Results per Page: ' + resultsPerPage);
 			isPrintedResults = true;
 		}
-		UtilsPage.addLinesToReports(CONSTANTS.BIGGEST);
+		console.log('');
 		return isPrintedResults;
 	}
 

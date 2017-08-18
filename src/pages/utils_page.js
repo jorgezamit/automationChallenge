@@ -66,9 +66,7 @@ class UtilsPage {
 
   waitForElementExists(element, timeout){
     var retries = 5;
-    var success = false;
-
-    while (retries-- > 0 && !(success = element.isExisting())) {
+    while (retries-- > 0 && !(element.isExisting())) {
       browser.pause(timeout);
     }
   }
@@ -138,19 +136,6 @@ class UtilsPage {
     browser.refresh();
   }
 
-  addLinesToReports(size){
-    let line; 
-    if(size=== CONSTANTS.SMALL){
-      line = '--------------';
-    }else if(size=== CONSTANTS.MEDIUM){
-      line = '-------------------------------------------';
-
-    }else if(size=== CONSTANTS.BIGGEST){
-      line = '--------------------------------------------------------------------------------------------------';
-    }
-    console.log(line);
-  }
-
   //Method related to API calls
   searchFromApi(id, searchText, location, price, categories, apiPath){
     var results;
@@ -160,9 +145,7 @@ class UtilsPage {
         location: location,
         term: searchText,
         price: price,
-        categories: categories,
-        ns: '1'
-
+        categories: categories
       },
       headers: {
         "Authorization": CONSTANTS.TOKEN
@@ -178,10 +161,8 @@ class UtilsPage {
       if(response.statusCode === CONSTANTS.HTTP_STATUS_CODE_OK){
         results = data;
       }else{
-        console.log(response.error.code);
-        console.log(response.error.description);
-        console.log('Error in Server response, method searchFromApi()');
-        return;
+        console.log(response);
+        //console.log(response.error.description);
       }
     }).on('error', function (err) {
     console.log('Something went wrong on the request', err.request.options);
@@ -192,9 +173,8 @@ class UtilsPage {
   }
 
   reportDataToConsole(searchText, location, price, categories, apiPath){
-    var data = this.searchFromApi('', searchText, location, price, categories, apiPath);
-    //setTimeout(function(){console.log('your name')},5000);  
-
+    var tempCategories = (categories !== undefined && categories !== '') ? categories.toLowerCase() : '';
+    var data = this.searchFromApi('', searchText, location, price, tempCategories, apiPath);
     if(data !== undefined) {
       console.log('Results for: ' + searchText + ' near ' + location);
       if(price && price !== ''){
@@ -212,7 +192,6 @@ class UtilsPage {
     }    
   }
   
-
   reportStarsRating(searchText, location, price, categories, apiPath){
     if(!searchText || !location || !apiPath){
       console.log('Error in method reportField()');
@@ -262,6 +241,7 @@ class UtilsPage {
         console.log('');
       }
     }
+    console.log('End reports from API');
     browser.pause(15000);
   }
 }

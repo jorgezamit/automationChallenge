@@ -18,7 +18,7 @@ class YelpRestaurantDetailPage {
 	}
 
 	getCustomersReviews(numberOfReviews){
-		this.customerReviews.waitForVisible();
+		UtilsPage.waitForElementExists(this.customerReviews, 1000);
 		var customerReviews = this.customerReviews.value;
 		var isPrintedResults = false;
 		
@@ -30,7 +30,7 @@ class YelpRestaurantDetailPage {
 		var userInfo = {};
 		userInfo.review = {};
 		for(var i = startFromRealFirstReview; i < numberOfReviews+1; i++){
-			UtilsPage.addLinesToReports(CONSTANTS.BIGGEST);
+			console.log('');
 			userInfo.name = customerReviews[i].element('#dropdown_user-name').getText();
 			userInfo.location = customerReviews[i].element('li.user-location').getText();
 			userInfo.review.date = customerReviews[i].element('.review-content span').getText();
@@ -41,8 +41,10 @@ class YelpRestaurantDetailPage {
 			console.log('Date: ' + userInfo.review.date + ' - Stars given: ' + userInfo.review.stars);
 			console.log('Content: ' + userInfo.review.content);
 			isPrintedResults = true;
-			UtilsPage.addLinesToReports(CONSTANTS.BIGGEST);
+			console.log('');
 		}
+		console.log('End reports from UI');
+		console.log('');
 		return isPrintedResults;
 	}
 }

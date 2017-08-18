@@ -69,9 +69,9 @@ module.exports = function() {
 		expect(totalResults.businesses.length > 0).to.equal(true, 'Expected positive total result number.');
 	});
 
-	this.When(/^Append "([^"]*)" to "([^"]*)" and search Restaurants Pizza with Price "([^"]*)" filter and Category "([^"]*)" filter in API and make report$/, function(text, text2, price, category){
-		var totalResults = UtilsPage.reportDataToConsole(text2 + ' ' + text, 'san francisco', price, category, CONSTANTS.YELP_BUSINESS_SEARCH_API_PATH);
-		//expect(totalResults.businesses.length > 0).to.equal(true, 'Expected positive total result number.');
+	this.When(/^Append "([^"]*)" to "([^"]*)" and search Restaurants Pizza with Category "([^"]*)" filter in API and make report$/, function(text, text2, category){
+		var totalResults = UtilsPage.reportDataToConsole(text2 + ' ' + text, 'san francisco', '', category, CONSTANTS.YELP_BUSINESS_SEARCH_API_PATH);
+		
 	});
 
 	this.When(/^Report the star rating of each of the results in the first result page in API$/, function(){
