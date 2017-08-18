@@ -1,151 +1,150 @@
-'use strict';
+
 const UtilsPage = require('../pages/utils_page.js');
 const CONSTANTS = require('../constants.js');
 const fs = require('fs');
 
 class YelpHomePage {
 
-	get findDescription()            { return browser.element('#find_desc'); }
-	get buttonHeaderSearch()  		 { return browser.element('#header-search-submit'); }
-	get suggestionsList()			 { return browser.elements('ul[class="suggestions-list"]'); }
-	get paginationResults()  		 { return browser.element('.pagination-results-window'); }
-	get buttonFilter()				 { return browser.element('.suggested-filters_filter-list > li:last-child'); }
-	get neighborHoodMainFilter()     { return browser.element('.filter-set.place-filters > ul.main'); }
-	get distanceFilter()			 { return browser.element('.filter-set.distance-filters > ul'); }
-	get categoryFilter()			 { return browser.element('.filter-set.category-filters > ul'); }
-	get priceFilter()			     { return browser.element('.filter-set.price-filters > ul'); }
-	get restaurantsMainAttributes()  { return browser.elements('.regular-search-result .main-attributes .media-story'); }
-	get spinner() 					 { return browser.elements('.results-wrapper .throbber-container'); }
-	get indexBusinessName() 		 { return browser.elements('.indexed-biz-name'); }
+  get findDescription() { return browser.element('#find_desc'); }
+  get buttonHeaderSearch()  		 { return browser.element('#header-search-submit'); }
+  get suggestionsList()			 { return browser.elements('ul[class="suggestions-list"]'); }
+  get paginationResults()  		 { return browser.element('.pagination-results-window'); }
+  get buttonFilter()				 { return browser.element('.suggested-filters_filter-list > li:last-child'); }
+  get neighborHoodMainFilter() { return browser.element('.filter-set.place-filters > ul.main'); }
+  get distanceFilter()			 { return browser.element('.filter-set.distance-filters > ul'); }
+  get categoryFilter()			 { return browser.element('.filter-set.category-filters > ul'); }
+  get priceFilter()			     { return browser.element('.filter-set.price-filters > ul'); }
+  get restaurantsMainAttributes() { return browser.elements('.regular-search-result .main-attributes .media-story'); }
+  get spinner() 					 { return browser.elements('.results-wrapper .throbber-container'); }
+  get indexBusinessName() 		 { return browser.elements('.indexed-biz-name'); }
 
 
-	setfindDescription(value){
-        this.findDescription.waitForVisible();
-        this.findDescription.setValue(value);
+  setfindDescription(value) {
+    this.findDescription.waitForVisible();
+    this.findDescription.setValue(value);
+  }
+
+  clickOnSuggestion(value) {
+    this.findDescription.waitForVisible();
+    this.findDescription.click();
+    this.suggestionsList.waitForVisible();
+    const elements = this.suggestionsList.value;
+    const firstList = elements[0];
+    const items = firstList.elements('li').value;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].getText() === value) {
+        items[i].click();
+        break;
+      }
     }
+  }
 
-	clickOnSuggestion(value){
-		this.findDescription.waitForVisible();
-		this.findDescription.click();
-		this.suggestionsList.waitForVisible();
-		var elements = this.suggestionsList.value;
-		var firstList = elements[0];
-		var items = firstList.elements('li').value;
-		for(var i = 0; i < items.length; i++){
-			if(items[i].getText() === value){
-				items[i].click();
-				break;
-			}
-		}
-	}
+  appendToSearch(text) {
+    this.findDescription.waitForVisible();
+    const currentSearch = this.findDescription.getValue();
+    this.setfindDescription(`${currentSearch} ${text}`);
+    this.buttonHeaderSearch.waitForVisible();
+    this.buttonHeaderSearch.click();
+  }
 
-	appendToSearch(text){
-		this.findDescription.waitForVisible();
-		var currentSearch = this.findDescription.getValue();
-		this.setfindDescription(currentSearch + ' ' + text);
-		this.buttonHeaderSearch.waitForVisible();
-		this.buttonHeaderSearch.click();
-	}
+  reportTotalNumberOfSearchResults() {
+    this.findDescription.waitForVisible();
+    const currentSearch = this.findDescription.getValue();
+    let isPrintedResults = false;
+    console.log('Results for: Restaurants near san francisco');
+    isPrintedResults = this.printPaginationToConsole();
+    console.log('');
+    return isPrintedResults;
+  }
 
-	reportTotalNumberOfSearchResults(){
-		this.findDescription.waitForVisible();
-		var currentSearch = this.findDescription.getValue();
-		var isPrintedResults = false;
-		console.log('Results for: Restaurants near san francisco');
-		isPrintedResults = this.printPaginationToConsole();
-		console.log('');
-		return isPrintedResults;
-	}
+  reportWithFilterFields(filterText, filterField) {
+    this.buttonFilter.waitForVisible();
+    if (!this.categoryFilter.isVisible()) {
+      this.buttonFilter.click();
+    }
+    let currentFieldItems;
+    if (filterField && (filterField === CONSTANTS.CATEGORY)) {
+      this.categoryFilter.waitForVisible();
+      currentFieldItems = this.categoryFilter.elements('li').value;
+    } else if (filterField && (filterField === CONSTANTS.PRICE)) {
+      this.priceFilter.waitForVisible();
+      currentFieldItems = this.priceFilter.elements('li').value;
+    }
+    let isPrintedResults = false;
+    if (filterText) {
+      for (let i = 0; i < currentFieldItems.length; i++) {
+        if (currentFieldItems[i].element('label > span').getText().includes(filterText)) {
+          currentFieldItems[i].element('label > span').click();
+          break;
+        }
+      }
+      isPrintedResults = this.printPaginationToConsole();
+    }
+    console.log('Results for: Restaurants pizza near san francisco');
+    if (filterField === CONSTANTS.CATEGORY) {
+      console.log(`Category: ${filterText}`);
+    } else if (filterField === CONSTANTS.PRICE) {
+      console.log(`Price: ${filterText}`);
+    }
+    return isPrintedResults;
+  }
 
-	reportWithFilterFields(filterText, filterField){
-		this.buttonFilter.waitForVisible();
-		if(!this.categoryFilter.isVisible()){
-			this.buttonFilter.click();
-		}
-		var currentFieldItems;
-		if(filterField && (filterField === CONSTANTS.CATEGORY)){
-			this.categoryFilter.waitForVisible();
-			currentFieldItems = this.categoryFilter.elements('li').value;
+  reportStarsOfRestaurants() {
+    UtilsPage.waitForElementExists(this.restaurantsMainAttributes, 2000);
+    const restaurantsMainAttributes = this.restaurantsMainAttributes.value;
+    let isPrintedResults = false;
+    let indexedBizName;
+    let stars;
+    console.log('');
+    console.log('Reports of stars per Restaurant:');
+    for (let i = 0; i < restaurantsMainAttributes.length; i++) {
+      indexedBizName = `${i + 1}. ${restaurantsMainAttributes[i].element('.indexed-biz-name > a > span').getText()}`;
+      stars = restaurantsMainAttributes[i].getAttribute('.i-stars', 'title');
+      console.log('');
+      console.log(indexedBizName);
+      console.log(stars);
+      console.log('');
+      isPrintedResults = true;
+    }
+    return isPrintedResults;
+  }
 
-		}else if(filterField && (filterField === CONSTANTS.PRICE)){
-			this.priceFilter.waitForVisible();
-			currentFieldItems = this.priceFilter.elements('li').value;
-		}
-		var isPrintedResults = false;
-		if(filterText){
-			for(var i = 0; i < currentFieldItems.length; i++){
-				if(currentFieldItems[i].element('label > span').getText().includes(filterText)){
-					currentFieldItems[i].element('label > span').click();
-					break;
-				}
-			}
-			isPrintedResults = this.printPaginationToConsole();
-		}
-		console.log('Results for: Restaurants pizza near san francisco');
-		if(filterField === CONSTANTS.CATEGORY){
-			console.log('Category: ' + filterText);
-		}else if(filterField === CONSTANTS.PRICE){
-			console.log('Price: ' + filterText);
-		}
-		return isPrintedResults;
-	}
+  clickAndExpandSpecificRestaurantInformation(specificRestaurant) {
+    const restaurantsMainAttributes = this.restaurantsMainAttributes.value;
+    if (specificRestaurant >= restaurantsMainAttributes.length) {
+      console.log('specificRestaurant value out of scope in reportCriticalRestaurantInformation()');
+      return;
+    }
+    restaurantsMainAttributes[specificRestaurant].element(' a').click();
+  }
 
-	reportStarsOfRestaurants(){
-		UtilsPage.waitForElementExists(this.restaurantsMainAttributes, 2000);
-		var restaurantsMainAttributes = this.restaurantsMainAttributes.value;
-		var isPrintedResults = false;
-		var indexedBizName;
-		var stars;
-		console.log('');
-		console.log('Reports of stars per Restaurant:');
-		for(var i = 0; i < restaurantsMainAttributes.length; i++){
-			indexedBizName = (i+1) + '. '+ restaurantsMainAttributes[i].element('.indexed-biz-name > a > span').getText();
-			stars = restaurantsMainAttributes[i].getAttribute('.i-stars','title');
-			console.log('');
-			console.log(indexedBizName);
-			console.log(stars);
-			console.log('');
-			isPrintedResults = true;
-		}
-		return isPrintedResults;
-	}
+  printPaginationToConsole() {
+    UtilsPage.waitForElementToHide(this.spinner, 2000);
+    let isPrintedResults = false;
+    this.paginationResults.waitForVisible();
+    if (!this.paginationResults.isVisible()) {
+      console.log('Some error Happen with pagination information');
+      return isPrintedResults;
+    }
+    console.log('');
+    const pagination = this.paginationResults.getText();
+    let totalResults;
+    let resultsPerPage;
+    if (pagination.includes('of')) {
+      totalResults = pagination.split('of')[1].replace(/\s/g, '');
+      console.log(`Total results: ${totalResults}`);
+      resultsPerPage = pagination.split('of')[0].split('-')[1].replace(/\s/g, '');
+      console.log(`Results per Page: ${resultsPerPage}`);
+      isPrintedResults = true;
+    }
+    console.log('');
+    return isPrintedResults;
+  }
 
-	clickAndExpandSpecificRestaurantInformation(specificRestaurant){
-		var restaurantsMainAttributes = this.restaurantsMainAttributes.value;
-		if(specificRestaurant >= restaurantsMainAttributes.length){
-			console.log('specificRestaurant value out of scope in reportCriticalRestaurantInformation()');
-			return;
-		}
-		restaurantsMainAttributes[specificRestaurant].element(' a').click();
-	}
-
-	printPaginationToConsole(){
-		UtilsPage.waitForElementToHide(this.spinner, 2000);
-		var isPrintedResults = false;
-		this.paginationResults.waitForVisible();
-		if(!this.paginationResults.isVisible()){
-			console.log('Some error Happen with pagination information');
-			return isPrintedResults;
-		}
-		console.log('');
-		var pagination = this.paginationResults.getText();
-		var totalResults;
-		var resultsPerPage;
-		if(pagination.includes('of')){
-			totalResults = pagination.split('of')[1].replace(/\s/g,'');
-			console.log('Total results: ' + totalResults);
-			resultsPerPage = pagination.split('of')[0].split('-')[1].replace(/\s/g,'');
-			console.log('Results per Page: ' + resultsPerPage);
-			isPrintedResults = true;
-		}
-		console.log('');
-		return isPrintedResults;
-	}
-
-	isRestaurantsDisplayed(){
-		this.paginationResults.waitForVisible();
-		return this.paginationResults.isVisible();
-	}
+  isRestaurantsDisplayed() {
+    this.paginationResults.waitForVisible();
+    return this.paginationResults.isVisible();
+  }
 
 }
 module.exports = new YelpHomePage();
