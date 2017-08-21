@@ -23,16 +23,16 @@ class YelpRestaurantDetailPage {
   getCustomersReviews(numberOfReviews) {
     UtilsPage.waitForElementExists(this.customerReviews, 1000);
     const customerReviews = this.customerReviews.value;
-    let isPrintedResults = false;
+    const isPrintedResults = false;
 
     if (!numberOfReviews || numberOfReviews >= customerReviews.length) {
       console.log('numberOfReviews value out of scope in getCustomersReviews()');
       return isPrintedResults;
     }
     const startFromRealFirstReview = 1;
-    let userInfo = {};
+    const userInfo = {};
     userInfo.review = {};
-    
+
     for (let i = startFromRealFirstReview; i < numberOfReviews + 1; i++) {
       userInfo.name = customerReviews[i].element('#dropdown_user-name').getText();
       userInfo.location = customerReviews[i].element('li.user-location').getText();

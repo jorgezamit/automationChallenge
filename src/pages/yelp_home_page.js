@@ -54,7 +54,7 @@ class YelpHomePage {
   reportTotalNumberOfSearchResults() {
     this.findDescription.waitForVisible();
     const currentSearch = this.findDescription.getValue();
-    let isPrintedResults = false;
+    const isPrintedResults = false;
     console.log('Results for: Restaurants near san francisco');
     this.printPaginationToConsole();
   }
@@ -83,17 +83,17 @@ class YelpHomePage {
         }
       }
     }
-     this.printPaginationToConsole();
+    this.printPaginationToConsole();
   }
 
   reportStarsOfRestaurants() {
     UtilsPage.waitForElementExists(this.restaurantsMainAttributes, 2000);
     const restaurantsMainAttributes = this.restaurantsMainAttributes.value;
-   
+
     for (let i = 0; i < restaurantsMainAttributes.length; i++) {
       const indexedBizName = `${i + 1}. ${restaurantsMainAttributes[i].element('.indexed-biz-name > a > span').getText()}`;
       const stars = restaurantsMainAttributes[i].getAttribute('.i-stars', 'title');
-      globalData.starsResults.push(indexedBizName + ' ' + stars);
+      globalData.starsResults.push(`${indexedBizName} ${stars}`);
     }
     return globalData.starsResults.length > 0;
   }
@@ -109,7 +109,7 @@ class YelpHomePage {
 
   printPaginationToConsole() {
     UtilsPage.waitForElementToHide(this.spinner, 2000);
-    
+
     this.paginationResults.waitForVisible();
     if (!this.paginationResults.isVisible()) {
       console.log('Some error Happen with pagination information');
@@ -122,9 +122,9 @@ class YelpHomePage {
     if (pagination.includes('of')) {
       totalResults = pagination.split('of')[1].replace(/\s/g, '');
       resultsPerPage = pagination.split('of')[0].split('-')[1].replace(/\s/g, '');
-      globalData.restaurantsResults.push('Total results: ' + totalResults + ' , results per page ' + resultsPerPage);
-    }else{
-       globalData.restaurantsResults.push('No results displayed');
+      globalData.restaurantsResults.push(`Total results: ${totalResults} , results per page ${resultsPerPage}`);
+    } else {
+      globalData.restaurantsResults.push('No results displayed');
     }
   }
 

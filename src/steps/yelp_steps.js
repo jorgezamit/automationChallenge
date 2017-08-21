@@ -30,17 +30,17 @@ module.exports = function () {
   	const isRestaurantsDisplayed = YelpHomePage.isRestaurantsDisplayed();
     expect(isRestaurantsDisplayed).to.equal(true, 'Expected to see restaurants displayed.');
   	process.send({
-      event: 'runner:extra',
-      body: globalData.restaurantsResults
-    });
+    event: 'runner:extra',
+    body: globalData.restaurantsResults,
+  });
   });
 
   this.Then(/^Restaurants Stars report should be generated$/, () => {
-    var isReportGenerated = YelpHomePage.reportStarsOfRestaurants();
+    const isReportGenerated = YelpHomePage.reportStarsOfRestaurants();
     expect(isReportGenerated).to.equal(true, 'Expected Restaurants Stars report generated.');
     process.send({
       event: 'runner:extra',
-      body: globalData.starsResults
+      body: globalData.starsResults,
     });
   });
 
@@ -57,7 +57,7 @@ module.exports = function () {
     YelpRestaurantDetailPage.getCriticalRestaurantInformation();
     process.send({
       event: 'runner:extra',
-      body: globalData.specificRestaurant
+      body: globalData.specificRestaurant,
     });
   });
 
@@ -66,7 +66,7 @@ module.exports = function () {
     expect(isLoggedCustomerReviews).to.equal(true, 'Expected to be logged first three customers reviews.');
     process.send({
       event: 'runner:extra',
-      body: globalData.restaurantReviews
+      body: globalData.restaurantReviews,
     });
   });
 

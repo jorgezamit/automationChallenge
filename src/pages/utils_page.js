@@ -138,7 +138,7 @@ class UtilsPage {
     fs.writeFileSync(`${srcPath + textWithoutSpaces + datetime}.png`, screenshot);
     process.send({
       event: 'runner:extra',
-      body: `${srcPath + textWithoutSpaces + datetime}.png`
+      body: `${srcPath + textWithoutSpaces + datetime}.png`,
     });
   }
 

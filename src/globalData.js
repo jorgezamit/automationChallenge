@@ -1,6 +1,6 @@
 module.exports = {
-	restaurantsResults: [],
-	starsResults: [],
-	specificRestaurant: {},
-	restaurantReviews: []
+  restaurantsResults: [],
+  starsResults: [],
+  specificRestaurant: {},
+  restaurantReviews: [],
 };
