@@ -97,21 +97,22 @@ class UtilsPage {
     return element.isExisting();
   }
 
-  generateRandomEmail() {
-    let email = '';
-    const charset = 'abcdefghijklmnopqrstuvwxyz';
-    for (let i = 0; i < 6; i++) {
-      email += charset.charAt(Math.floor(Math.random() * charset.length));
+  _generateRandom(charset, length = 6) {
+    let text;
+    for (let i = 0; i < length; i++) {
+      text += charset.charAt(Math.floor(Math.random() * charset.length));
     }
-    return `${email}@random.io`;
+    return text;
+  }
+  generateRandomEmail(domain = 'random.io') {
+    const charset = 'abcdefghijklmnopqrstuvwxyz';
+    const email = this._generateRandom(charset);
+    return `${email}@${domain}`;
   }
 
   generateRandomChars() {
-    let text = '';
     const charset = 'abcdefghijklmnopqrstuvwxyz1234567890';
-    for (let i = 0; i < 6; i++) {
-      text += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
+    const text = this._generateRandom(charset);
     return text;
   }
 
@@ -135,6 +136,10 @@ class UtilsPage {
     const screenshot = browser.saveScreenshot();
     const textWithoutSpaces = `${text.replace(/\s/g, '')}-`;
     fs.writeFileSync(`${srcPath + textWithoutSpaces + datetime}.png`, screenshot);
+    process.send({
+      event: 'runner:extra',
+      body: `${srcPath + textWithoutSpaces + datetime}.png`
+    });
   }
 
   refreshPage() {

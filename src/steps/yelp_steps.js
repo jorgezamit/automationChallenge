@@ -1,6 +1,7 @@
 const YelpHomePage = require('../pages/yelp_home_page.js');
 const YelpRestaurantDetailPage = require('../pages/yelp_restaurant_detail_page.js');
 const UtilsPage = require('../pages/utils_page.js');
+const globalData = require('../globalData.js');
 const CONSTANTS = require('../constants.js');
 
 
@@ -9,7 +10,7 @@ module.exports = function () {
     UtilsPage.goTo(URL);
   });
 
-  this.When(/^As a Yelp user I select "([^"]*)" in dropdown box in Find$/, (dropdownOption) => {
+  this.When(/^I click search input and select "([^"]*)" in dropdown box in Find$/, (dropdownOption) => {
     YelpHomePage.clickOnSuggestion(dropdownOption);
   });
 
@@ -17,18 +18,30 @@ module.exports = function () {
     YelpHomePage.appendToSearch(text);
   });
 
-  this.When(/^Use the price filter "([^"]*)"$/, (price) => {
+  this.When(/^I filter the results by "([^"]*)"$/, (price) => {
     YelpHomePage.reportWithFilterFields(price, CONSTANTS.PRICE);
   });
 
-  this.When(/^Use the Category filter "([^"]*)"$/, (category) => {
+  this.When(/^I apply the filter "([^"]*)"$/, (category) => {
     YelpHomePage.reportWithFilterFields(category, CONSTANTS.CATEGORY);
   });
 
-  this.Then(/^A list of restaurants is displayed$/, () => {
-  	YelpHomePage.printPaginationToConsole();
-    const isRestaurantsDisplayed = YelpHomePage.isRestaurantsDisplayed();
-    expect(isRestaurantsDisplayed).to.equal(true, 'Expected to have search results displayed.');
+  this.Then(/^I should see a list of restaurants displayed$/, () => {
+  	const isRestaurantsDisplayed = YelpHomePage.isRestaurantsDisplayed();
+    expect(isRestaurantsDisplayed).to.equal(true, 'Expected to see restaurants displayed.');
+  	process.send({
+      event: 'runner:extra',
+      body: globalData.restaurantsResults
+    });
+  });
+
+  this.Then(/^Restaurants Stars report should be generated$/, () => {
+    var isReportGenerated = YelpHomePage.reportStarsOfRestaurants();
+    expect(isReportGenerated).to.equal(true, 'Expected Restaurants Stars report generated.');
+    process.send({
+      event: 'runner:extra',
+      body: globalData.starsResults
+    });
   });
 
   this.When(/^Report the star rating of each of the results in the first result page$/, () => {
@@ -42,11 +55,19 @@ module.exports = function () {
 
   this.When(/^Log all critical information of the selected restaurant details$/, () => {
     YelpRestaurantDetailPage.getCriticalRestaurantInformation();
+    process.send({
+      event: 'runner:extra',
+      body: globalData.specificRestaurant
+    });
   });
 
   this.Then(/^Log first three customers reviews of the selected restaurant$/, () => {
-    const isPrintedResults = YelpRestaurantDetailPage.getCustomersReviews(CONSTANTS.NUMBER_OF_CUSTOMERS_REVIEWS);
-    expect(isPrintedResults).to.equal(true, 'Expected to have customer reviews printed to console.');
+    const isLoggedCustomerReviews = YelpRestaurantDetailPage.getCustomersReviews(CONSTANTS.NUMBER_OF_CUSTOMERS_REVIEWS);
+    expect(isLoggedCustomerReviews).to.equal(true, 'Expected to be logged first three customers reviews.');
+    process.send({
+      event: 'runner:extra',
+      body: globalData.restaurantReviews
+    });
   });
 
   this.Then(/^No restaurants should be displayed$/, () => {
@@ -70,8 +91,8 @@ module.exports = function () {
     expect(totalResults.businesses.length > 0).to.equal(true, 'Expected positive total result number.');
   });
 
-  this.When(/^Append "([^"]*)" to "([^"]*)" and search Restaurants Pizza with Price "([^"]*)" and Category "([^"]*)" filter in API and make report$/, (text, text2, price, category) => {
-    const totalResults = UtilsPage.reportDataToConsole(`${text2} ${text}`, 'san francisco', price, category, CONSTANTS.YELP_BUSINESS_SEARCH_API_PATH);
+  this.When(/^Append "([^"]*)" to "([^"]*)" and search Restaurants Pizza with Category "([^"]*)" filter in API and make report$/, (text, text2, category) => {
+    const totalResults = UtilsPage.reportDataToConsole(`${text2} ${text}`, 'san francisco', '', category, CONSTANTS.YELP_BUSINESS_SEARCH_API_PATH);
   });
 
   this.When(/^Report the star rating of each of the results in the first result page in API$/, () => {

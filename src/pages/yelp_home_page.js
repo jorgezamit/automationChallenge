@@ -1,6 +1,7 @@
 
 const UtilsPage = require('../pages/utils_page.js');
 const CONSTANTS = require('../constants.js');
+const globalData = require('../globalData.js');
 const fs = require('fs');
 
 class YelpHomePage {
@@ -38,6 +39,7 @@ class YelpHomePage {
         break;
       }
     }
+    this.printPaginationToConsole();
   }
 
   appendToSearch(text) {
@@ -46,6 +48,7 @@ class YelpHomePage {
     this.setfindDescription(`${currentSearch} ${text}`);
     this.buttonHeaderSearch.waitForVisible();
     this.buttonHeaderSearch.click();
+    this.printPaginationToConsole();
   }
 
   reportTotalNumberOfSearchResults() {
@@ -53,9 +56,7 @@ class YelpHomePage {
     const currentSearch = this.findDescription.getValue();
     let isPrintedResults = false;
     console.log('Results for: Restaurants near san francisco');
-    isPrintedResults = this.printPaginationToConsole();
-    console.log('');
-    return isPrintedResults;
+    this.printPaginationToConsole();
   }
 
   reportWithFilterFields(filterText, filterField) {
@@ -82,31 +83,19 @@ class YelpHomePage {
         }
       }
     }
-    if (filterField === CONSTANTS.CATEGORY) {
-      console.log(`Category: ${filterText}`);
-    } else if (filterField === CONSTANTS.PRICE) {
-      console.log(`Price: ${filterText}`);
-    }
+     this.printPaginationToConsole();
   }
 
   reportStarsOfRestaurants() {
     UtilsPage.waitForElementExists(this.restaurantsMainAttributes, 2000);
     const restaurantsMainAttributes = this.restaurantsMainAttributes.value;
-    let isPrintedResults = false;
-    let indexedBizName;
-    let stars;
-    console.log('');
-    console.log('Reports of stars per Restaurant:');
+   
     for (let i = 0; i < restaurantsMainAttributes.length; i++) {
-      indexedBizName = `${i + 1}. ${restaurantsMainAttributes[i].element('.indexed-biz-name > a > span').getText()}`;
-      stars = restaurantsMainAttributes[i].getAttribute('.i-stars', 'title');
-      console.log('');
-      console.log(indexedBizName);
-      console.log(stars);
-      console.log('');
-      isPrintedResults = true;
+      const indexedBizName = `${i + 1}. ${restaurantsMainAttributes[i].element('.indexed-biz-name > a > span').getText()}`;
+      const stars = restaurantsMainAttributes[i].getAttribute('.i-stars', 'title');
+      globalData.starsResults.push(indexedBizName + ' ' + stars);
     }
-    return isPrintedResults;
+    return globalData.starsResults.length > 0;
   }
 
   clickAndExpandSpecificRestaurantInformation(specificRestaurant) {
@@ -120,27 +109,23 @@ class YelpHomePage {
 
   printPaginationToConsole() {
     UtilsPage.waitForElementToHide(this.spinner, 2000);
-    let isPrintedResults = false;
+    
     this.paginationResults.waitForVisible();
     if (!this.paginationResults.isVisible()) {
       console.log('Some error Happen with pagination information');
-      return isPrintedResults;
+      return;
     }
     const currentSearch = this.findDescription.getValue();
-    console.log(`Current search: ${currentSearch}`);
-    console.log('');
     const pagination = this.paginationResults.getText();
     let totalResults;
     let resultsPerPage;
     if (pagination.includes('of')) {
       totalResults = pagination.split('of')[1].replace(/\s/g, '');
-      console.log(`Total results: ${totalResults}`);
       resultsPerPage = pagination.split('of')[0].split('-')[1].replace(/\s/g, '');
-      console.log(`Results per Page: ${resultsPerPage}`);
-      isPrintedResults = true;
+      globalData.restaurantsResults.push('Total results: ' + totalResults + ' , results per page ' + resultsPerPage);
+    }else{
+       globalData.restaurantsResults.push('No results displayed');
     }
-    console.log('');
-    return isPrintedResults;
   }
 
   isRestaurantsDisplayed() {

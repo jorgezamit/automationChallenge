@@ -1,6 +1,7 @@
 
 const UtilsPage = require('../pages/utils_page.js');
 const CONSTANTS = require('../constants.js');
+const globalData = require('../globalData.js');
 
 class YelpRestaurantDetailPage {
 
@@ -13,8 +14,10 @@ class YelpRestaurantDetailPage {
 
   getCriticalRestaurantInformation() {
     this.nameRestaurant.waitForVisible();
-    console.log(`Restaurant: ${this.nameRestaurant.getText()} - Address: ${this.address.getText()} - Website: ${this.businessWebsite.getText()
-				 } - Phone: ${this.businessPhone.getText()}`);
+    globalData.specificRestaurant.name = this.nameRestaurant.getText();
+    globalData.specificRestaurant.address = this.address.getText();
+    globalData.specificRestaurant.website = this.businessWebsite.getText();
+    globalData.specificRestaurant.phone = this.businessPhone.getText();
   }
 
   getCustomersReviews(numberOfReviews) {
@@ -27,25 +30,19 @@ class YelpRestaurantDetailPage {
       return isPrintedResults;
     }
     const startFromRealFirstReview = 1;
-    const userInfo = {};
+    let userInfo = {};
     userInfo.review = {};
+    
     for (let i = startFromRealFirstReview; i < numberOfReviews + 1; i++) {
-      console.log('');
       userInfo.name = customerReviews[i].element('#dropdown_user-name').getText();
       userInfo.location = customerReviews[i].element('li.user-location').getText();
       userInfo.review.date = customerReviews[i].element('.review-content span').getText();
       userInfo.review.stars = customerReviews[i].getAttribute('.i-stars', 'title');
       userInfo.review.content = customerReviews[i].element('.review-content>p').getText();
-      console.log(`Customer name: ${userInfo.name} - Customer location: ${userInfo.location}`);
-      console.log('Customer Review Info:');
-      console.log(`Date: ${userInfo.review.date} - Stars given: ${userInfo.review.stars}`);
-      console.log(`Content: ${userInfo.review.content}`);
-      isPrintedResults = true;
-      console.log('');
+      console.log(userInfo);
+      globalData.restaurantReviews.push(userInfo);
     }
-    console.log('End reports from UI');
-    console.log('');
-    return isPrintedResults;
+    return globalData.restaurantReviews.length > 0;
   }
 }
 
