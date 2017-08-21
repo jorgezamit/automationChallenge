@@ -14,6 +14,7 @@ class YelpHomePage {
   get distanceFilter()			 { return browser.element('.filter-set.distance-filters > ul'); }
   get categoryFilter()			 { return browser.element('.filter-set.category-filters > ul'); }
   get priceFilter()			     { return browser.element('.filter-set.price-filters > ul'); }
+  get filterPanel() 				{ return browser.element('.filter-panel_filters'); }
   get restaurantsMainAttributes() { return browser.elements('.regular-search-result .main-attributes .media-story'); }
   get spinner() 					 { return browser.elements('.results-wrapper .throbber-container'); }
   get indexBusinessName() 		 { return browser.elements('.indexed-biz-name'); }
@@ -58,35 +59,34 @@ class YelpHomePage {
   }
 
   reportWithFilterFields(filterText, filterField) {
-    this.buttonFilter.waitForVisible();
-    if (!this.categoryFilter.isVisible()) {
-      this.buttonFilter.click();
-    }
+  	UtilsPage.waitForElementBeVisible(this.filterPanel, 2000);
+  	if(!this.filterPanel.isVisible()){
+  		this.buttonFilter.click();
+  	}
     let currentFieldItems;
     if (filterField && (filterField === CONSTANTS.CATEGORY)) {
-      this.categoryFilter.waitForVisible();
-      currentFieldItems = this.categoryFilter.elements('li').value;
+    	UtilsPage.waitForElementExists(this.categoryFilter, 2000);
+      	currentFieldItems = this.categoryFilter.elements('li').value;
     } else if (filterField && (filterField === CONSTANTS.PRICE)) {
-      this.priceFilter.waitForVisible();
-      currentFieldItems = this.priceFilter.elements('li').value;
+    	UtilsPage.waitForElementExists(this.priceFilter, 2000);
+      	currentFieldItems = this.priceFilter.elements('li').value;
     }
-    let isPrintedResults = false;
+   
     if (filterText) {
       for (let i = 0; i < currentFieldItems.length; i++) {
+      	UtilsPage.waitForElementExists(currentFieldItems[i].element('label > span'), 5000);
         if (currentFieldItems[i].element('label > span').getText().includes(filterText)) {
           currentFieldItems[i].element('label > span').click();
+          UtilsPage.waitForElementToHide(this.spinner ,5000);
           break;
         }
       }
-      isPrintedResults = this.printPaginationToConsole();
     }
-    console.log('Results for: Restaurants pizza near san francisco');
     if (filterField === CONSTANTS.CATEGORY) {
       console.log(`Category: ${filterText}`);
     } else if (filterField === CONSTANTS.PRICE) {
       console.log(`Price: ${filterText}`);
     }
-    return isPrintedResults;
   }
 
   reportStarsOfRestaurants() {
@@ -126,6 +126,8 @@ class YelpHomePage {
       console.log('Some error Happen with pagination information');
       return isPrintedResults;
     }
+    const currentSearch = this.findDescription.getValue();
+    console.log('Current search: ' +  currentSearch);
     console.log('');
     const pagination = this.paginationResults.getText();
     let totalResults;

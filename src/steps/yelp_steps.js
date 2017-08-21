@@ -5,28 +5,30 @@ const CONSTANTS = require('../constants.js');
 
 
 module.exports = function () {
-  this.Given(/^Go to Yelp Site "([^"]*)"$/, (URL) => {
+  this.Given(/^I am on Yelp Homepage "([^"]*)"$/, (URL) => {
     UtilsPage.goTo(URL);
   });
 
-  this.When(/^Select "([^"]*)" in dropdown box in Find$/, (dropdownOption) => {
+  this.When(/^As a Yelp user I select "([^"]*)" in dropdown box in Find$/, (dropdownOption) => {
     YelpHomePage.clickOnSuggestion(dropdownOption);
   });
 
-  this.When(/^Append Pizza to Restaurants and search Restaurants Pizza$/, () => {
-    YelpHomePage.appendToSearch('pizza');
+  this.When(/^Append "([^"]*)" to Restaurants and click search button$/, (text) => {
+    YelpHomePage.appendToSearch(text);
   });
 
-  this.Then(/^Report total number of Search results with number of results in the current page$/, () => {
-    const isPrintedResults = YelpHomePage.reportTotalNumberOfSearchResults();
-    expect(isPrintedResults).to.equal(true, 'Expected to have the search results printed to console.');
+  this.When(/^Use the price filter "([^"]*)"$/, (price) => {
+    YelpHomePage.reportWithFilterFields(price, CONSTANTS.PRICE);
   });
 
-  this.When(/^Parameterize any 2 of the filtering parameters apply filter and report total no. of searchs results$/, () => {
-    let isPrintedResults = YelpHomePage.reportWithFilterFields('Sandwiches', CONSTANTS.CATEGORY);
-    expect(isPrintedResults).to.equal(true, 'Expected to have total number of search results with filter printed to console.');
-    isPrintedResults = YelpHomePage.reportWithFilterFields('$', CONSTANTS.PRICE);
-    expect(isPrintedResults).to.equal(true, 'Expected to have total number of search results with filter printed to console.');
+  this.When(/^Use the Category filter "([^"]*)"$/, (category) => {
+    YelpHomePage.reportWithFilterFields(category, CONSTANTS.CATEGORY);
+  });
+   
+  this.Then(/^A list of restaurants is displayed$/, () => {
+  	YelpHomePage.printPaginationToConsole();
+    const isRestaurantsDisplayed = YelpHomePage.isRestaurantsDisplayed();
+    expect(isRestaurantsDisplayed).to.equal(true, 'Expected to have search results displayed.');
   });
 
   this.When(/^Report the star rating of each of the results in the first result page$/, () => {
@@ -68,8 +70,8 @@ module.exports = function () {
     expect(totalResults.businesses.length > 0).to.equal(true, 'Expected positive total result number.');
   });
 
-  this.When(/^Append "([^"]*)" to "([^"]*)" and search Restaurants Pizza with Category "([^"]*)" filter in API and make report$/, (text, text2, category) => {
-    const totalResults = UtilsPage.reportDataToConsole(`${text2} ${text}`, 'san francisco', '', category, CONSTANTS.YELP_BUSINESS_SEARCH_API_PATH);
+  this.When(/^Append "([^"]*)" to "([^"]*)" and search Restaurants Pizza with Price "([^"]*)" and Category "([^"]*)" filter in API and make report$/, (text, text2, price, category) => {
+    const totalResults = UtilsPage.reportDataToConsole(`${text2} ${text}`, 'san francisco', price, category, CONSTANTS.YELP_BUSINESS_SEARCH_API_PATH);
   });
 
   this.When(/^Report the star rating of each of the results in the first result page in API$/, () => {

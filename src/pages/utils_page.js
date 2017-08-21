@@ -69,6 +69,13 @@ class UtilsPage {
     }
   }
 
+  waitForElementBeVisible(element, timeout) {
+    let retries = 5;
+    while (retries-- > 0 && !(element.isVisible())) {
+      browser.pause(timeout);
+    }
+  }
+
   waitForElementExistsWithText(text, element, timeout) {
     let retries = 5;
     let success = false;
