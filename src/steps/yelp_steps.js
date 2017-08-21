@@ -24,7 +24,7 @@ module.exports = function () {
   this.When(/^Use the Category filter "([^"]*)"$/, (category) => {
     YelpHomePage.reportWithFilterFields(category, CONSTANTS.CATEGORY);
   });
-   
+
   this.Then(/^A list of restaurants is displayed$/, () => {
   	YelpHomePage.printPaginationToConsole();
     const isRestaurantsDisplayed = YelpHomePage.isRestaurantsDisplayed();

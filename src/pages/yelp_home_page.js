@@ -60,7 +60,7 @@ class YelpHomePage {
 
   reportWithFilterFields(filterText, filterField) {
   	UtilsPage.waitForElementBeVisible(this.filterPanel, 2000);
-  	if(!this.filterPanel.isVisible()){
+  	if (!this.filterPanel.isVisible()) {
   		this.buttonFilter.click();
   	}
     let currentFieldItems;
@@ -71,13 +71,13 @@ class YelpHomePage {
     	UtilsPage.waitForElementExists(this.priceFilter, 2000);
       	currentFieldItems = this.priceFilter.elements('li').value;
     }
-   
+
     if (filterText) {
       for (let i = 0; i < currentFieldItems.length; i++) {
       	UtilsPage.waitForElementExists(currentFieldItems[i].element('label > span'), 5000);
         if (currentFieldItems[i].element('label > span').getText().includes(filterText)) {
           currentFieldItems[i].element('label > span').click();
-          UtilsPage.waitForElementToHide(this.spinner ,5000);
+          UtilsPage.waitForElementToHide(this.spinner, 5000);
           break;
         }
       }
@@ -127,7 +127,7 @@ class YelpHomePage {
       return isPrintedResults;
     }
     const currentSearch = this.findDescription.getValue();
-    console.log('Current search: ' +  currentSearch);
+    console.log(`Current search: ${currentSearch}`);
     console.log('');
     const pagination = this.paginationResults.getText();
     let totalResults;
