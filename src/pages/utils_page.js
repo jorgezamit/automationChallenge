@@ -26,7 +26,6 @@ class UtilsPage {
   clickOnElementWithTitle(all_elements, title) {
     let my_element;
     all_elements.waitForVisible(50000);
-    console.log(`Title: ${title}`);
     all_elements.value.forEach((elem) => {
       console.log(`browser.elementIdText(elem.ELEMENT).value: ${browser.elementIdText(elem.ELEMENT).value}`);
       if (browser.elementIdText(elem.ELEMENT).value == title) {
@@ -36,7 +35,6 @@ class UtilsPage {
 
     if (my_element != null) {
       browser.elementIdClick(my_element);
-      console.log(`Clicked: ${title}`);
       return true;
     }
     return false;
@@ -46,7 +44,7 @@ class UtilsPage {
     browser.waitForExist(selector, 30000);
     const all_elements = browser.elements(selector);
     let my_element;
-    console.log(`Title: ${title}`);
+    
     all_elements.value.forEach((elem) => {
       console.log(`browser.elementIdText(elem.ELEMENT).value: ${browser.elementIdText(elem.ELEMENT).value}`);
       if (browser.elementIdText(elem.ELEMENT).value == title) {
@@ -56,7 +54,6 @@ class UtilsPage {
 
     if (my_element != null) {
       browser.elementIdClick(my_element);
-      console.log(`Clicked: ${title}`);
       return true;
     }
     return false;
@@ -92,7 +89,6 @@ class UtilsPage {
   }
 
   isElementPresent(element) {
-    console.log('element present?');
     element.waitForVisible(10000);
     return element.isExisting();
   }
@@ -172,7 +168,6 @@ class UtilsPage {
         results = data;
       } else {
         console.log(response);
-        // console.log(response.error.description);
       }
     }).on('error', (err) => {
       console.log('Something went wrong on the request', err.request.options);
