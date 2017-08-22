@@ -3,9 +3,11 @@ const UtilsPage = require('../pages/utils_page.js');
 const CONSTANTS = require('../constants.js');
 const globalData = require('../globalData.js');
 
+const START_FROM_REAL_FIRST_REVIEW = 1;
+
 class YelpRestaurantDetailPage {
 
-  get nameRestaurant()  				{ return browser.element('.biz-page-title'); }
+  get nameRestaurant()  			{ return browser.element('.biz-page-title'); }
   get address()               		{ return browser.element('.street-address>address'); }
   get businessPhone()      			{ return browser.element('.biz-phone'); }
   get businessWebsite()				{ return browser.element('.biz-website > a'); }
@@ -29,17 +31,17 @@ class YelpRestaurantDetailPage {
       console.log('numberOfReviews value out of scope in getCustomersReviews()');
       return isPrintedResults;
     }
-    const startFromRealFirstReview = 1;
-    const userInfo = {};
-    userInfo.review = {};
 
-    for (let i = startFromRealFirstReview; i < numberOfReviews + 1; i++) {
-      userInfo.name = customerReviews[i].element('#dropdown_user-name').getText();
-      userInfo.location = customerReviews[i].element('li.user-location').getText();
-      userInfo.review.date = customerReviews[i].element('.review-content span').getText();
-      userInfo.review.stars = customerReviews[i].getAttribute('.i-stars', 'title');
-      userInfo.review.content = customerReviews[i].element('.review-content>p').getText();
-      console.log(userInfo);
+    for (let i = START_FROM_REAL_FIRST_REVIEW; i < numberOfReviews + 1; i++) {
+      const userInfo = {
+      	name: customerReviews[i].element('#dropdown_user-name').getText(),
+      	location: customerReviews[i].element('li.user-location').getText(),
+      	review: {
+      		date: customerReviews[i].element('.review-content span').getText(),
+      		stars: customerReviews[i].getAttribute('.i-stars', 'title'),
+      		content: customerReviews[i].element('.review-content>p').getText()
+      	}
+      };
       globalData.restaurantReviews.push(userInfo);
     }
     return globalData.restaurantReviews.length > 0;

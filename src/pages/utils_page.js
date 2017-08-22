@@ -177,23 +177,26 @@ class UtilsPage {
     return results;
   }
 
-  reportDataToConsole(searchText, location, price, categories, apiPath) {
+  reportData(searchText, location, price, categories, apiPath) {
     const tempCategories = (categories !== undefined && categories !== '') ? categories.toLowerCase() : '';
     const data = this.searchFromApi('', searchText, location, price, tempCategories, apiPath);
     if (data !== undefined) {
-      console.log(`Results for: ${searchText} near ${location}`);
+      let report = {
+        totalResults: data.total,
+        resultsPerPage: data.businesses.length
+      };
       if (price && price !== '') {
-        console.log(`Price selected: ${price}`);
+        report.priceFilter = price;
       }
       if (categories && categories !== '') {
-        console.log(`Categories selected: ${categories}`);
+        report.categoryFilter = categories;
       }
-      console.log(`Results per page: ${data.businesses.length}`);
-      console.log(`Total results: ${data.total}`);
-      console.log('');
+      this.sendDataToCustomReport(report);
       return data;
+    }else{
+      console.log('data is Undefined');
     }
-    console.log('data is Undefined');
+    
   }
 
   reportStarsRating(searchText, location, price, categories, apiPath) {
@@ -203,13 +206,14 @@ class UtilsPage {
     }
     let data = this.searchFromApi('', searchText, location, price, categories, apiPath);
     data = data.businesses;
-    let report = '';
+    
     if (data && data.length > 0) {
+      let reports = [];
       for (let i = 0; i < data.length; i++) {
-        report = `Restaurant: ${i + 1}. ${data[i].name} Star Rating: ${data[i].rating}`;
-        console.log(report);
-        console.log('');
+        const report = `Restaurant: ${i + 1}. ${data[i].name} Star Rating: ${data[i].rating}`;
+        reports.push(report);
       }
+      this.sendDataToCustomReport(reports);
     }
     browser.pause(15000);
   }
@@ -224,30 +228,44 @@ class UtilsPage {
       restaurantPosition = 0;
     }
     const data = this.searchFromApi('', searchText, location, price, categories, apiPath);
-    const restaurantId = data.businesses[restaurantPosition].id;
-    const restaurantName = data.businesses[restaurantPosition].name;
-    const restaurantPhone = data.businesses[restaurantPosition].display_phone;
-    const restaurantUrl = data.businesses[restaurantPosition].url;
-    const restaurantAddress = `${data.businesses[restaurantPosition].location.address1}, ${data.businesses[restaurantPosition].location.city}`;
-    console.log('');
-    console.log(`Restaurant: ${restaurantName} - Address: ${restaurantAddress} - Phone: ${restaurantPhone}`);
-    console.log(`Url: ${restaurantUrl}`);
-    let restaurantReviews = this.searchFromApi(restaurantId, searchText, location, price, categories, `${CONSTANTS.YELP_BUSINESS_API_PATH + restaurantId}/reviews`);
-    restaurantReviews = restaurantReviews.reviews;
-    if (restaurantReviews && restaurantReviews.length > 0) {
-      let clientReview = '';
-      for (let i = 0; i < 3; i++) {
-        console.log('');
-        clientReview = `Client name: ${restaurantReviews[i].user.name} - Rating: ${restaurantReviews[i].rating}`;
-        console.log(clientReview);
-        clientReview = `Comments: ${restaurantReviews[i].text}`;
-        console.log(clientReview);
-        console.log('');
+    if(data !== undefined){
+      let restaurant = {
+        restaurantId: data.businesses[restaurantPosition].id,
+        restaurantName: data.businesses[restaurantPosition].name,
+        restaurantPhone: data.businesses[restaurantPosition].display_phone,
+        restaurantUrl: data.businesses[restaurantPosition].url,
+        restaurantAddress: data.businesses[restaurantPosition].location.address1 + ' city: ' + data.businesses[restaurantPosition].location.city,
+        reviews: []
+      };
+      let restaurantReviews = this.searchFromApi(restaurant.restaurantId, searchText, location, price, categories, `${CONSTANTS.YELP_BUSINESS_API_PATH + restaurant.restaurantId}/reviews`);
+      if(restaurantReviews !== undefined && restaurantReviews.reviews !== undefined){
+        restaurantReviews = restaurantReviews.reviews;
+        console.log(restaurantReviews);
+        console.log('its here!');
+        for (let i = 0; i < 3; i++) {
+          const clientReview = {
+            name: restaurantReviews[i].user.name,
+            rating: restaurantReviews[i].rating,
+            text: restaurantReviews[i].text
+          };
+          restaurant.reviews.push(clientReview);
+        }
       }
+      this.sendDataToCustomReport(restaurant);
+    }else{
+      console.log('Data is undefined, error in method reportCriticalInformation()');
     }
-    console.log('End reports from API');
+    
     browser.pause(15000);
   }
+
+  sendDataToCustomReport(data){
+    process.send({
+      event: 'runner:extra',
+      body: data
+    });
+  }
+
 }
 
 module.exports = new UtilsPage();

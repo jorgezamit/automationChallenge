@@ -39,7 +39,7 @@ class YelpHomePage {
         break;
       }
     }
-    this.printPaginationToConsole();
+    this.savePaginationData();
   }
 
   appendToSearch(text) {
@@ -48,7 +48,7 @@ class YelpHomePage {
     this.setfindDescription(`${currentSearch} ${text}`);
     this.buttonHeaderSearch.waitForVisible();
     this.buttonHeaderSearch.click();
-    this.printPaginationToConsole();
+    this.savePaginationData();
   }
 
   reportTotalNumberOfSearchResults() {
@@ -56,7 +56,7 @@ class YelpHomePage {
     const currentSearch = this.findDescription.getValue();
     const isPrintedResults = false;
     console.log('Results for: Restaurants near san francisco');
-    this.printPaginationToConsole();
+    this.savePaginationData();
   }
 
   reportWithFilterFields(filterText, filterField) {
@@ -83,7 +83,7 @@ class YelpHomePage {
         }
       }
     }
-    this.printPaginationToConsole();
+    this.savePaginationData();
   }
 
   reportStarsOfRestaurants() {
@@ -107,7 +107,7 @@ class YelpHomePage {
     restaurantsMainAttributes[specificRestaurant].element(' a').click();
   }
 
-  printPaginationToConsole() {
+  savePaginationData() {
     UtilsPage.waitForElementToHide(this.spinner, 2000);
 
     this.paginationResults.waitForVisible();
