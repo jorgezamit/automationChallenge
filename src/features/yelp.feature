@@ -1,5 +1,5 @@
 Feature: Automation Challenge B UI
-    @Pending
+    
     Scenario: Automation Challenge B UI
     	Given I am on Yelp Homepage "/"
     	When I click search input and select "Restaurants" in dropdown box in Find
@@ -11,7 +11,7 @@ Feature: Automation Challenge B UI
         And Click and expand the first result from the search results
         Then Log all critical information of the selected restaurant details
         Then Log first three customers reviews of the selected restaurant
-    @Pending
+
     Scenario: Failing Scenario Test
     	Given I am on Yelp Homepage "/"
     	When I click search input and select "Restaurants" in dropdown box in Find

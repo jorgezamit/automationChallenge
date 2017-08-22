@@ -62,5 +62,4 @@ module.exports = function () {
     const isRestaurantsDisplayed = YelpHomePage.isRestaurantsDisplayed();
     expect(isRestaurantsDisplayed).to.equal(false, 'Expected NO restaurants results displayed');
   });
-
 };

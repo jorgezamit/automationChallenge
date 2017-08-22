@@ -39,8 +39,8 @@ class YelpRestaurantDetailPage {
       	review: {
       		date: customerReviews[i].element('.review-content span').getText(),
       		stars: customerReviews[i].getAttribute('.i-stars', 'title'),
-      		content: customerReviews[i].element('.review-content>p').getText()
-      	}
+      		content: customerReviews[i].element('.review-content>p').getText(),
+      	},
       };
       globalData.restaurantReviews.push(userInfo);
     }

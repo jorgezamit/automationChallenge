@@ -99,12 +99,14 @@ class YelpHomePage {
   }
 
   clickAndExpandSpecificRestaurantInformation(specificRestaurant) {
+  	UtilsPage.waitForElementBeVisible(this.restaurantsMainAttributes, 3000);
     const restaurantsMainAttributes = this.restaurantsMainAttributes.value;
     if (specificRestaurant >= restaurantsMainAttributes.length) {
       console.log('specificRestaurant value out of scope in reportCriticalRestaurantInformation()');
       return;
     }
-    restaurantsMainAttributes[specificRestaurant].element(' a').click();
+
+    restaurantsMainAttributes[specificRestaurant].element('a').click();
   }
 
   savePaginationData() {

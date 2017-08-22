@@ -44,7 +44,7 @@ class UtilsPage {
     browser.waitForExist(selector, 30000);
     const all_elements = browser.elements(selector);
     let my_element;
-    
+
     all_elements.value.forEach((elem) => {
       console.log(`browser.elementIdText(elem.ELEMENT).value: ${browser.elementIdText(elem.ELEMENT).value}`);
       if (browser.elementIdText(elem.ELEMENT).value == title) {
@@ -181,9 +181,9 @@ class UtilsPage {
     const tempCategories = (categories !== undefined && categories !== '') ? categories.toLowerCase() : '';
     const data = this.searchFromApi('', searchText, location, price, tempCategories, apiPath);
     if (data !== undefined) {
-      let report = {
+      const report = {
         totalResults: data.total,
-        resultsPerPage: data.businesses.length
+        resultsPerPage: data.businesses.length,
       };
       if (price && price !== '') {
         report.priceFilter = price;
@@ -193,10 +193,8 @@ class UtilsPage {
       }
       this.sendDataToCustomReport(report);
       return data;
-    }else{
-      console.log('data is Undefined');
     }
-    
+    console.log('data is Undefined');
   }
 
   reportStarsRating(searchText, location, price, categories, apiPath) {
@@ -206,9 +204,9 @@ class UtilsPage {
     }
     let data = this.searchFromApi('', searchText, location, price, categories, apiPath);
     data = data.businesses;
-    
+
     if (data && data.length > 0) {
-      let reports = [];
+      const reports = [];
       for (let i = 0; i < data.length; i++) {
         const report = `Restaurant: ${i + 1}. ${data[i].name} Star Rating: ${data[i].rating}`;
         reports.push(report);
@@ -228,41 +226,39 @@ class UtilsPage {
       restaurantPosition = 0;
     }
     const data = this.searchFromApi('', searchText, location, price, categories, apiPath);
-    if(data !== undefined){
-      let restaurant = {
+    if (data !== undefined) {
+      const restaurant = {
         restaurantId: data.businesses[restaurantPosition].id,
         restaurantName: data.businesses[restaurantPosition].name,
         restaurantPhone: data.businesses[restaurantPosition].display_phone,
         restaurantUrl: data.businesses[restaurantPosition].url,
-        restaurantAddress: data.businesses[restaurantPosition].location.address1 + ' city: ' + data.businesses[restaurantPosition].location.city,
-        reviews: []
+        restaurantAddress: `${data.businesses[restaurantPosition].location.address1} city: ${data.businesses[restaurantPosition].location.city}`,
+        reviews: [],
       };
       let restaurantReviews = this.searchFromApi(restaurant.restaurantId, searchText, location, price, categories, `${CONSTANTS.YELP_BUSINESS_API_PATH + restaurant.restaurantId}/reviews`);
-      if(restaurantReviews !== undefined && restaurantReviews.reviews !== undefined){
+      if (restaurantReviews !== undefined && restaurantReviews.reviews !== undefined) {
         restaurantReviews = restaurantReviews.reviews;
-        console.log(restaurantReviews);
-        console.log('its here!');
         for (let i = 0; i < 3; i++) {
           const clientReview = {
             name: restaurantReviews[i].user.name,
             rating: restaurantReviews[i].rating,
-            text: restaurantReviews[i].text
+            text: restaurantReviews[i].text,
           };
           restaurant.reviews.push(clientReview);
         }
       }
       this.sendDataToCustomReport(restaurant);
-    }else{
+    } else {
       console.log('Data is undefined, error in method reportCriticalInformation()');
     }
-    
+
     browser.pause(15000);
   }
 
-  sendDataToCustomReport(data){
+  sendDataToCustomReport(data) {
     process.send({
       event: 'runner:extra',
-      body: data
+      body: data,
     });
   }
 
