@@ -251,7 +251,6 @@ class UtilsPage {
     } else {
       console.log('Data is undefined, error in method reportCriticalInformation()');
     }
-
     browser.pause(15000);
   }
 
@@ -261,7 +260,6 @@ class UtilsPage {
       body: data,
     });
   }
-
 }
 
 module.exports = new UtilsPage();
