@@ -2,14 +2,20 @@ Steps to execute project
 ========================================
 Execute the following in the console.
 
-npm install
+WITH NPM
 
-npm run test
+Steps 1: npm install
+
+Step 2: npm run test
 
 
-Prerequisite
-========================================
+WITH YARN
 
-Install Yarn
-
+Prerequisite: Install Yarn
 https://yarnpkg.com/lang/en/docs/install/
+
+Step 1: yarn install
+
+Step 2: yarn test
+
+
